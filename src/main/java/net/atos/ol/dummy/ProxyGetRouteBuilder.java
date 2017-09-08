@@ -15,7 +15,7 @@ import java.util.Properties;
 public class ProxyGetRouteBuilder
         extends RouteBuilder
 {
-    String host = "localhost";
+    String host = "dummy-service";
     String port = "8080";
     String context = "/ol_dummy_service/dummy";
 
@@ -39,9 +39,9 @@ public class ProxyGetRouteBuilder
         }
         catch (FileNotFoundException fnfe)
         {
-            // do nothing, just use defaults
+            log.warn("Unable to open /proxy.properties. Defaulting proxy settings");
         }
-        from("direct:proxy")
+        from("direct:proxy").log(simple("Received request for ${header.request-path}").toString())
                 .setHeader(Exchange.HTTP_URI,
                             simple("http4://" + host + ":" + port + context + "${header.request-path}"))
                 .to("http4://localhost:80");

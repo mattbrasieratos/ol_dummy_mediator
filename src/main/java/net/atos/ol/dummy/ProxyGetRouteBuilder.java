@@ -41,9 +41,12 @@ public class ProxyGetRouteBuilder
         {
             log.warn("Unable to open /proxy.properties. Defaulting proxy settings");
         }
-        from("direct:proxy").log(simple("Received request for ${header.request-path}").toString())
+        from("direct:proxy")
+                .routeId("dummy-mediation")
+                .log(simple("Received request for ${header.request-path}").toString())
                 .setHeader(Exchange.HTTP_URI,
                             simple("http4://" + host + ":" + port + context + "${header.request-path}"))
-                .to("http4://localhost:80");
+                .to("http4://localhost:80") //URI here is overridden using header above
+                .log(simple("Received response from http://" + host + ":" + port + context + "${header.request-path}").toString());
     }
 }

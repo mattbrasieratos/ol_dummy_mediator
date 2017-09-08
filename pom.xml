@@ -23,11 +23,11 @@
 
     <groupId>net.atos.ol.dummy</groupId>
     <artifactId>dummy-mediation</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>WildFly Camel CDI Application</name>
-    <url>http://www.myorganization.org</url>
+    <name>Orchestration Layer Dummy Mediation</name>
+    <url>http://www.atos.net</url>
 
     <!-- Properties -->
     <properties>

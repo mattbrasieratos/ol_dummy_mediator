@@ -1,7 +1,7 @@
 node {
     stage('Prep') {
         deleteDir()
-        git credentialsId: 'matt-github', url: 'https://github.com/atosorigin/NSI_OL_DUMMY.git'
+        git url: 'https://github.com/mattbrasieratos/ol_dummy_mediator'
         
         // set BUILD_TIMESTAMP
         def now = new Date()

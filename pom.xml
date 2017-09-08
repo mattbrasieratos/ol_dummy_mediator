@@ -216,6 +216,25 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>${version.maven.surefire.plugin}</version>
                         <configuration>
+                           <skip>true</skip> 
+			</configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <!-- The default profile skips all tests, though you can tune it to run just unit tests based on a custom pattern -->
+            <id>test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${version.maven.surefire.plugin}</version>
+                        <configuration>
                             <systemPropertyVariables>
                                 <!--  Force Jersey to be used when RestEasy is auto-discovered. Jersey is required by docker-java -->
                                 <javax.ws.rs.ext.RuntimeDelegate>org.glassfish.jersey.internal.RuntimeDelegateImpl</javax.ws.rs.ext.RuntimeDelegate>

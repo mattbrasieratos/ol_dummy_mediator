@@ -9,7 +9,7 @@
         <property name="definitionFormat">CUBE</property>
         <property name="dockerContainers">
             test:
-                image: dummy-mediation
+                image: dummy-mediation:0.0.1-SNAPSHOT
                 exposedPorts: [8080/tcp]
                 await:
                     strategy: sleeping
@@ -23,7 +23,7 @@
                     - dummy-service:dummy-service
 
             dummy-service:
-                image: ol_dummy_service
+                image: ol_dummy_service:0.0.1-SNAPSHOT
                 await:
                     strategy: sleeping
                     sleepTime: 30 s

@@ -28,62 +28,43 @@ public class DummyTest {
     private URL url;
 
     @Test
-    @InSequence(1)
-    public void basicTest() {
-        assertThat(true, is(true));
-    }
-
-    @Test
     @RunAsClient
-    @InSequence(2)
+    @InSequence(10)
     public void echoTest() throws Exception {
 
         System.out.println("URL: "+url.toExternalForm());
 
         given().
                 when().
-                get(url.toExternalForm() + "/dummy_mediation/echo/12345").
+                get(url.toExternalForm() + "dummy-mediation/echo/12345").
                 then().
                 assertThat().body(containsString("12345"));
     }
 
     @Test
     @RunAsClient
-    @InSequence(3)
+    @InSequence(20)
     public void reverseTest() throws Exception {
 
         System.out.println("URL: "+url.toExternalForm());
 
         given().
                 when().
-                get(url.toExternalForm() + "/dummy_mediation/reverse/12345").
+                get(url.toExternalForm() + "dummy-mediation/reverse/12345").
                 then().
                 assertThat().body(containsString("54321"));
     }
     @Test
     @RunAsClient
-    @InSequence(4)
+    @InSequence(30)
     public void timeTest() throws Exception {
 
         System.out.println("URL: "+url.toExternalForm());
 
         given().
                 when().
-                get(url.toExternalForm() + "/dummy_mediation/time").
+                get(url.toExternalForm() + "dummy-mediation/time").
                 then().
-                assertThat().body(containsString("12345"));
-    }
-    @Test
-    @RunAsClient
-    @InSequence(2)
-    public void heartbeatTest() throws Exception {
-
-        System.out.println("URL: "+url.toExternalForm());
-
-        given().
-                when().
-                get(url.toExternalForm() + "/dummy_mediation/echo/12345").
-                then().
-                assertThat().body(containsString("12345"));
+                assertThat().body(containsString(":"));
     }
 }

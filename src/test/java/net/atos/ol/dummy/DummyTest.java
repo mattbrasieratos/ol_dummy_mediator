@@ -23,7 +23,7 @@ public class DummyTest {
     @HostIp
     private String ip;
 
-    @DockerUrl(containerName = "test", exposedPort = 1080)
+    @DockerUrl(containerName = "test", exposedPort = 8080)
     @ArquillianResource
     private URL url;
 

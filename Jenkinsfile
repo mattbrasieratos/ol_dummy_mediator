@@ -25,10 +25,6 @@ node {
           sh 'mvn -B compile'
         }
         
-        stage('Test') {
-          sh 'mvn -B test'
-        }
-        
         stage('Dependency Check') {
           sh 'mvn -B org.owasp:dependency-check-maven:2.1.0:check'
         }

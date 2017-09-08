@@ -54,8 +54,8 @@ node {
     
     stage('Release') {
         withCredentials([usernameColonPassword(credentialsId: 'nexus', variable: 'USERPASS')]) {
-            sh '''curl -v -u ${USERPASS} --upload-file target/ol_dummy_service.war \
-                     http://nexus:8081/repository/maven-snapshots/net/atos/ol_dummy_service/${BUILD_TIMESTAMP}-SNAPSHOT/ol_dummy_service-${BUILD_TIMESTAMP}-SNAPSHOT.war'''
+            sh '''curl -v -u ${USERPASS} --upload-file target/dummy_mediation.war \
+                     http://nexus:8081/repository/maven-snapshots/net/atos/dummy_mediation/${BUILD_TIMESTAMP}-SNAPSHOT/dummy_mediation-${BUILD_TIMESTAMP}-SNAPSHOT.war'''
         }
     }
 }

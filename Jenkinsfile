@@ -43,13 +43,14 @@ node {
           sh 'mvn -B package'
         }
 
+        stage('Containerise') {
+          sh 'mvn -B docker:build'
+        }
+
         stage('Test') {
           sh 'mvn -P test -B test'
         }
 
-        stage('Containerise') {
-          sh 'mvn -B docker:build'
-        }
     }
     
     stage('Release') {

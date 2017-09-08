@@ -13,7 +13,7 @@
                 exposedPorts: [8080/tcp]
                 await:
                     strategy: sleeping
-                    sleepTime: 60 s
+                    sleepTime: 30 s
                 portBindings: [8080/tcp]
                 restartPolicy:
                     name: failure
@@ -26,7 +26,7 @@
                 image: ol_dummy_service:0.0.1-SNAPSHOT
                 await:
                     strategy: sleeping
-                    sleepTime: 60 s
+                    sleepTime: 30 s
                 restartPolicy:
                     name: failure
                     maximumRetryCount: 1

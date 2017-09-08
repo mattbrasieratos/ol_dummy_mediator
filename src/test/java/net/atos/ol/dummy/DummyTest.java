@@ -4,6 +4,8 @@ import java.net.URL;
 
 import org.arquillian.cube.DockerUrl;
 import org.arquillian.cube.HostIp;
+import org.arquillian.cube.CubeIp;
+
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -27,12 +29,19 @@ public class DummyTest {
     @ArquillianResource
     private URL url;
 
+    @CubeIp(containerName = "test")
+    //@ArquillianResource
+    private String hip;
+
     @Test
     @RunAsClient
     @InSequence(10)
     public void echoTest() throws Exception {
 
         System.out.println("URL: "+url.toExternalForm());
+        System.out.println("HOST IP: "+ip);
+        System.out.println("CUBE IP: "+ip);
+
 
         given().
                 when().

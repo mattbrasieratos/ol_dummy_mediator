@@ -17,7 +17,7 @@ node {
     }
     // Maven build steps
     withDockerContainer(image: 'maven:3-jdk-8',
-          args: ''' 
+          args: '''--network="citools"
                    -v /var/run/docker.sock:/var/run/docker.sock
                    --group-add ${DOCKER_GID}''') {
 

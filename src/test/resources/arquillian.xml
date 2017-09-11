@@ -21,6 +21,8 @@
                 manual: false
                 links:
                     - dummy-service:dummy-service
+                networks:
+                    - citools
 
             dummy-service:
                 image: ol_dummy_service:0.0.1-SNAPSHOT
@@ -31,6 +33,8 @@
                     name: failure
                     maximumRetryCount: 1
                 manual: false
+                networks:
+                    - citools
         </property>
     </extension>
 

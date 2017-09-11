@@ -34,48 +34,17 @@ public class DummyTest {
     @ArquillianResource
     private URL url;
 
-    @CubeIp(containerName = "test")
-    //@ArquillianResource
-    private String hip;
-
     @Test
     @RunAsClient
     @InSequence(10)
     public void echoTest() throws Exception {
-
-        //System.out.println("URL: "+url.toExternalForm());
-        //System.out.println("HOST IP: "+ip);
-        //System.out.println("CUBE IP: "+ip);
-        //System.out.println("EXEC HOSTNAME: "+execWithResult("hostname"));
-        //System.out.println("JAVA HOSTNAME: "+InetAddress.getLocalHost().getHostName());
-        //System.out.println("EXEC2 HOSTNAME: "+execWithResult("ip a | grep docker0"));
-        //System.out.println("EXEC3 HOSTNAME: "+execWithResult("cat /etc/hosts | grep 172"));
-        //System.out.println("EXEC5 HOSTNAME: "+execWithResult("ifconfig eth0 | grep \"inet addr:\" | cut -d \" \" -f 1"));
-        //System.out.println("EXEC6 HOSTNAME: "+execWithResult("tail -1 /etc/hosts"));
-        //System.out.println("EXEC7 HOSTNAME: "+execWithResult("/sbin/ip route | awk '/scope/ {print $9}'"));
-        //System.out.println("EXEC8 HOSTNAME: "+execWithResult("docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' dummy-mediation"));
-
-        String url2 = execWithResult("hostname -i");
-        if (url2.indexOf(" ") != -1)
-        {
-            url2=url2.substring(url2.indexOf(" ")+1,url2.length());
-        }
-
-        System.out.println("EXEC4 HOSTNAME: "+url2);
-
-        //System.out.println("test IP: "+InetAddress.getByName("test"));
-        //System.out.println("dummy-mediator IP: "+InetAddress.getByName("dummy-mediator"));
-
-
-
         given().
                 when().
-                //get(url.toExternalForm() + "dummy-mediation/echo/12345").
-                get("http://"+url2+":8080/" + "dummy-mediation/echo/12345").
+                get(url.toExternalForm() + "dummy-mediation/echo/12345").
                 then().
                 assertThat().body(containsString("12345"));
     }
-/*
+
     @Test
     @RunAsClient
     @InSequence(20)
@@ -102,25 +71,5 @@ public class DummyTest {
                 then().
                 assertThat().body(containsString(":"));
     }
-*/
-    private String execWithResult(String s)
-    {
-        String result = null;
 
-        try {
-
-            Runtime rt = Runtime.getRuntime();
-            Process proc = rt.exec(s);
-            InputStream stdout = proc.getInputStream();
-            InputStreamReader isr = new InputStreamReader(stdout);
-            BufferedReader br = new BufferedReader(isr);
-            result = br.readLine();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return result;
-
-    }
 }

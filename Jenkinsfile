@@ -17,7 +17,7 @@ node {
     }
     // Maven build steps
     withDockerContainer(image: 'maven:3-jdk-8',
-          args: '''
+          args: '''--network="citools"
                    -v /var/run/docker.sock:/var/run/docker.sock
                    --group-add ${DOCKER_GID}''') {
 
@@ -29,15 +29,15 @@ node {
           sh 'mvn -B org.owasp:dependency-check-maven:2.1.0:check'
         }
 
-       // stage('Sonar Check') {
-       //   withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'sonar',
-       //                 usernameVariable: 'SONAR_USER', passwordVariable: 'SONAR_PASS']]) {
-       //     sh '''mvn -B sonar:sonar \
-       //         -Dsonar.host.url=http://sonar:9000 \
-       //         -Dsonar.login=${SONAR_USER} \
-       //         -Dsonar.password=${SONAR_PASS}'''                                        
-       //   }
-       // }
+        stage('Sonar Check') {
+          withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'sonar',
+                        usernameVariable: 'SONAR_USER', passwordVariable: 'SONAR_PASS']]) {
+            sh '''mvn -B sonar:sonar \
+                -Dsonar.host.url=http://sonar:9000 \
+                -Dsonar.login=${SONAR_USER} \
+                -Dsonar.password=${SONAR_PASS}'''                                        
+          }
+        }
 
         stage('Package') {
           sh 'mvn -B package'
@@ -46,8 +46,12 @@ node {
         stage('Containerise') {
           sh 'mvn -B docker:build'
         }
-
-        stage('Test') {
+    }
+    withDockerContainer(image: 'maven:3-jdk-8',
+      args: '''
+               -v /var/run/docker.sock:/var/run/docker.sock
+                --group-add ${DOCKER_GID}''') 
+    	 stage('Test') {
           sh 'mvn -P test -B test'
         }
 

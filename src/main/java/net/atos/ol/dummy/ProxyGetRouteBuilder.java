@@ -1,6 +1,8 @@
 package net.atos.ol.dummy;
 
 import javax.enterprise.context.ApplicationScoped;
+
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.Exchange;
@@ -43,6 +45,7 @@ public class ProxyGetRouteBuilder
         }
         from("direct:proxy")
                 .routeId("dummy-mediation")
+                .errorHandler(loggingErrorHandler("dummy-mediation").level(LoggingLevel.ERROR))
                 .log(simple("Received request for ${header.request-path}").toString())
                 .setHeader(Exchange.HTTP_URI,
                             simple("http4://" + host + ":" + port + context + "${header.request-path}"))

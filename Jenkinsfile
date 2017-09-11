@@ -48,7 +48,7 @@ node {
         }
 
         stage('Test') {
-          sh 'mvn -B test'
+          sh 'mvn -P test -B test'
         }
 
     }

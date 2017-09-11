@@ -191,7 +191,7 @@
                                     <targetDir>/opt/eap/standalone/deployments</targetDir>
                                 </assembly>
                                 <!-- requires fuse on eap Docker image -->
-                                <from>timrobinson/fuse_eap:6.3.0</from>
+                                <from>fuse_eap:6.3.0</from>
                             </build>
                         </image>
                     </images>

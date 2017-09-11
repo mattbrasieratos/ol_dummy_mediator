@@ -30,6 +30,9 @@ public class DummyTest {
     @HostIp
     private String ip;
 
+    @CubeIp(containerName = "test")
+    private String cip;
+
     @DockerUrl(containerName = "test", exposedPort = 8080)
     @ArquillianResource
     private URL url;
@@ -38,9 +41,12 @@ public class DummyTest {
     @RunAsClient
     @InSequence(10)
     public void echoTest() throws Exception {
+        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/echo/12345");
+
         given().
                 when().
-                get(url.toExternalForm() + "dummy-mediation/echo/12345").
+                //get(url.toExternalForm() + "dummy-mediation/echo/12345").
+                get("http://"+cip+":8080/" + "dummy-mediation/echo/12345").
                 then().
                 assertThat().body(containsString("12345"));
     }
@@ -50,11 +56,12 @@ public class DummyTest {
     @InSequence(20)
     public void reverseTest() throws Exception {
 
-        System.out.println("URL: "+url.toExternalForm());
+        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/reverse/12345");
 
         given().
                 when().
-                get(url.toExternalForm() + "dummy-mediation/reverse/12345").
+                //get(url.toExternalForm() + "dummy-mediation/reverse/12345").
+                get("http://"+cip+":8080/" + "dummy-mediation/reverse/12345").
                 then().
                 assertThat().body(containsString("54321"));
     }
@@ -63,13 +70,13 @@ public class DummyTest {
     @InSequence(30)
     public void timeTest() throws Exception {
 
-        System.out.println("URL: "+url.toExternalForm());
+        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/time");
 
         given().
                 when().
-                get(url.toExternalForm() + "dummy-mediation/time").
+                //get(url.toExternalForm() + "dummy-mediation/time").
+                get("http://"+cip+":8080/" + "dummy-mediation/time").
                 then().
                 assertThat().body(containsString(":"));
     }
-
 }

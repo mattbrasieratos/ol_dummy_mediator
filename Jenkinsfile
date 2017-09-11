@@ -50,7 +50,7 @@ node {
     withDockerContainer(image: 'maven:3-jdk-8',
       args: '''
                -v /var/run/docker.sock:/var/run/docker.sock
-                --group-add ${DOCKER_GID}''') 
+                --group-add ${DOCKER_GID}''') { 
     	 stage('Test') {
           sh 'mvn -P test -B test'
         }

@@ -1,11 +1,6 @@
 package net.atos.ol.dummy;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.InetAddress;
 
 import org.arquillian.cube.DockerUrl;
 import org.arquillian.cube.HostIp;
@@ -22,7 +17,6 @@ import org.junit.runner.RunWith;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
 public class DummyTest {
@@ -45,7 +39,6 @@ public class DummyTest {
 
         given().
                 when().
-                //get(url.toExternalForm() + "dummy-mediation/echo/12345").
                 get("http://"+cip+":8080/" + "dummy-mediation/echo/12345").
                 then().
                 assertThat().body(containsString("12345"));
@@ -60,7 +53,6 @@ public class DummyTest {
 
         given().
                 when().
-                //get(url.toExternalForm() + "dummy-mediation/reverse/12345").
                 get("http://"+cip+":8080/" + "dummy-mediation/reverse/12345").
                 then().
                 assertThat().body(containsString("54321"));
@@ -74,7 +66,6 @@ public class DummyTest {
 
         given().
                 when().
-                //get(url.toExternalForm() + "dummy-mediation/time").
                 get("http://"+cip+":8080/" + "dummy-mediation/time").
                 then().
                 assertThat().body(containsString(":"));

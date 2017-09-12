@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.cdi.ContextName;
 
 @WebServlet(name = "HttpServiceServlet", urlPatterns = { "/*" }, loadOnStartup = 1)
 public class ProxyGetMediationServlet extends HttpServlet {
@@ -43,6 +42,8 @@ public class ProxyGetMediationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         ServletOutputStream out = res.getOutputStream();
         ProducerTemplate producer = camelContext.createProducerTemplate();
+        //We only pass through headers we are interested in for the service, to prevent injection attacks
+        //The path that was requested is passed into Camel as the header "request-path"
         String result = producer.requestBodyAndHeader("direct:proxy",null, "request-path", req.getPathInfo(), java.lang.String.class);
         out.print(result);
     }

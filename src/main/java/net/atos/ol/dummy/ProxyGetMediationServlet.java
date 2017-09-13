@@ -35,6 +35,10 @@ import org.apache.camel.ProducerTemplate;
 @WebServlet(name = "HttpServiceServlet", urlPatterns = { "/*" }, loadOnStartup = 1)
 public class ProxyGetMediationServlet extends HttpServlet {
 
+    private static String DEFAULT_ENDPOINT="direct:dummy-default";
+    private static String VERSION_ONE_ENDPOINT="direct:dummy-v1";
+    private static String VERSION_ONE="/v1";
+
     @Inject
     private CamelContext camelContext;
 
@@ -44,7 +48,15 @@ public class ProxyGetMediationServlet extends HttpServlet {
         ProducerTemplate producer = camelContext.createProducerTemplate();
         //We only pass through headers we are interested in for the service, to prevent injection attacks
         //The path that was requested is passed into Camel as the header "request-path"
-        String result = producer.requestBodyAndHeader("direct:proxy",null, "request-path", req.getPathInfo(), java.lang.String.class);
+        String targetEndpoint=DEFAULT_ENDPOINT;
+        String requestPath = req.getPathInfo();
+        if (requestPath.startsWith(VERSION_ONE))
+        {
+            requestPath = requestPath.substring(requestPath.indexOf(VERSION_ONE)+VERSION_ONE.length(),requestPath.length());
+            targetEndpoint=VERSION_ONE_ENDPOINT;
+        }
+
+        String result = producer.requestBodyAndHeader(targetEndpoint,null, "request-path", requestPath, java.lang.String.class);
         out.print(result);
     }
 }

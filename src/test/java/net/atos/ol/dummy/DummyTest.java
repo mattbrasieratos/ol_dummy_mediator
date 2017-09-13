@@ -34,7 +34,7 @@ public class DummyTest {
     @Test
     @RunAsClient
     @InSequence(10)
-    public void echoTest() throws Exception {
+    public void echoTestDefault() throws Exception {
         System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/echo/12345");
 
         given().
@@ -47,7 +47,7 @@ public class DummyTest {
     @Test
     @RunAsClient
     @InSequence(20)
-    public void reverseTest() throws Exception {
+    public void reverseTestDefault() throws Exception {
 
         System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/reverse/12345");
 
@@ -60,13 +60,52 @@ public class DummyTest {
     @Test
     @RunAsClient
     @InSequence(30)
-    public void timeTest() throws Exception {
+    public void timeTestDefault() throws Exception {
 
         System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/time");
 
         given().
                 when().
                 get("http://"+cip+":8080/" + "dummy-mediation/time").
+                then().
+                assertThat().body(containsString(":"));
+    }
+    @Test
+    @RunAsClient
+    @InSequence(40)
+    public void echoTestV1() throws Exception {
+        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/v1/echo/12345");
+
+        given().
+                when().
+                get("http://"+cip+":8080/" + "dummy-mediation/echo/v1/12345").
+                then().
+                assertThat().body(containsString("12345"));
+    }
+
+    @Test
+    @RunAsClient
+    @InSequence(50)
+    public void reverseTestV1() throws Exception {
+
+        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/v1/reverse/12345");
+
+        given().
+                when().
+                get("http://"+cip+":8080/" + "dummy-mediation/v1/reverse/12345").
+                then().
+                assertThat().body(containsString("54321"));
+    }
+    @Test
+    @RunAsClient
+    @InSequence(60)
+    public void timeTestV1() throws Exception {
+
+        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/v1/time");
+
+        given().
+                when().
+                get("http://"+cip+":8080/" + "dummy-mediation/v1/time").
                 then().
                 assertThat().body(containsString(":"));
     }

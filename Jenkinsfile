@@ -57,10 +57,17 @@ node {
 
     }
     
-    stage('Release') {
+    stage('Publish WAR') {
         withCredentials([usernameColonPassword(credentialsId: 'nexus', variable: 'USERPASS')]) {
             sh '''curl -v -u ${USERPASS} --upload-file target/dummy-mediation.war \
                      http://nexus:8081/repository/maven-snapshots/net/atos/dummy-mediation/${BUILD_TIMESTAMP}-SNAPSHOT/dummy-mediation-${BUILD_TIMESTAMP}-SNAPSHOT.war'''
+        }
+    }
+
+    stage('Publish Image') {
+        def img = docker.image('dummy-mediation:0.0.1-SNAPSHOT');
+        docker.withRegistry('http://nexus:2375', 'nexus') {
+          img.push();
         }
     }
 }

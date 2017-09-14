@@ -49,8 +49,9 @@ public class ProxyGetRouteBuilder
                 .log(simple("v1:Received request for ${header.request-path}").getText())
                 .setHeader(Exchange.HTTP_URI,
                             simple("http4://" + host + ":" + port + context + "${header.request-path}"))
-                .to("http4://localhost:80") //URI here is overridden using header above
-                .log(simple("v1:Received response from http://" + host + ":" + port + context + "${header.request-path}").getText());
+                .to("http4://dummy:12345?throwExceptionOnFailure=false") //URI here is overridden using header above
+                .log(simple("v1:Received response from http://" + host + ":" + port + context + "${header.request-path}").getText())
+                .convertBodyTo(java.lang.String.class);
 
 
         from("direct:dummy-default")

@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 
 @WebServlet(name = "HttpServiceServlet", urlPatterns = { "/*" }, loadOnStartup = 1)
@@ -55,8 +56,18 @@ public class ProxyGetMediationServlet extends HttpServlet {
             requestPath = requestPath.substring(requestPath.indexOf(VERSION_ONE)+VERSION_ONE.length(),requestPath.length());
             targetEndpoint=VERSION_ONE_ENDPOINT;
         }
+        //Create a processor that will add the relevant information into the camel exchange
+        ProxyProcessor processor = new ProxyProcessor();
+        processor.addHeader("original-path", req.getPathInfo());
+        processor.addHeader("request-path", requestPath);
+        processor.addHeader("request-query",req.getQueryString());
 
-        String result = producer.requestBodyAndHeader(targetEndpoint,null, "request-path", requestPath, java.lang.String.class);
-        out.print(result);
+        //Call the exchange, passing in the processor
+        Exchange result = producer.request(targetEndpoint, processor);
+
+        //set the response code
+        res.setStatus((Integer)result.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        out.print((String)result.getOut().getBody());
+
     }
 }

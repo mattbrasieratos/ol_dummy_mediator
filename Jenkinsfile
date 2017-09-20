@@ -43,7 +43,9 @@ node {
           sh 'mvn -B package'
         }
 
+
         stage('Containerise') {
+          sh "git rev-parse HEAD > build.id"
           sh 'mvn -B docker:build'
         }
     }
@@ -74,7 +76,6 @@ node {
         println commit_id
         img.push();
         img.push('latest')
-        img.push("${commit_id}")
 	}
     }
 }

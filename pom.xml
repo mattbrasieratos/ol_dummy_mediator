@@ -20,7 +20,7 @@
         <version.wildfly.arquillian>1.0.2.Final</version.wildfly.arquillian>
 
         <!-- Other versions -->
-        <version.apache.camel>2.19.2</version.apache.camel>
+        <version.apache.camel>2.17.0</version.apache.camel>
         <version.arquillian.universe>1.1.13.5</version.arquillian.universe>
         <version.arquillian>1.8.0</version.arquillian>
         <version.restassured>3.0.0</version.restassured>
@@ -122,6 +122,20 @@
             <version>${version.restassured}</version>
             <scope>test</scope>
         </dependency>
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cdi</artifactId>
+      <version>${version.apache.camel}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- EXTRAS -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty</artifactId>
+      <version>${version.apache.camel}</version>
+    </dependency>
     </dependencies>
 
     <!-- Build-->
@@ -167,8 +181,8 @@
                             <name>${project.artifactId}:${project.version}</name>
                             <build>
                                 <assembly>
-                                    <descriptorRef>artifact</descriptorRef>
                                     <targetDir>/opt/eap/standalone/deployments</targetDir>
+                                    <descriptor>assembly.xml</descriptor>
                                 </assembly>
                                 <!-- requires fuse on eap Docker image -->
                                 <from>fuse_eap:6.3.0</from>

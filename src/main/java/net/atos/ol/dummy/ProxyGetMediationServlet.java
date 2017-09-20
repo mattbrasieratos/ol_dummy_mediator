@@ -1,25 +1,7 @@
-/*
- * #%L
- * Wildfly Camel
- * %%
- * Copyright (C) 2013 - 2015 RedHat
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
 package net.atos.ol.dummy;
 
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -36,9 +18,10 @@ import org.apache.camel.ProducerTemplate;
 @WebServlet(name = "HttpServiceServlet", urlPatterns = { "/*" }, loadOnStartup = 1)
 public class ProxyGetMediationServlet extends HttpServlet {
 
-    private static String DEFAULT_ENDPOINT="direct:dummy-default";
-    private static String VERSION_ONE_ENDPOINT="direct:dummy-v1";
-    private static String VERSION_ONE="/v1";
+    private static final String X_FORWARDED_FOR = "X-Forwarded-For";
+    private static final String DEFAULT_ENDPOINT="direct:dummy-default";
+    private static final String VERSION_ONE_ENDPOINT="direct:dummy-v1";
+    private static final String VERSION_ONE="/v1";
 
     @Inject
     private CamelContext camelContext;
@@ -51,6 +34,20 @@ public class ProxyGetMediationServlet extends HttpServlet {
         //The path that was requested is passed into Camel as the header "request-path"
         String targetEndpoint=DEFAULT_ENDPOINT;
         String requestPath = req.getPathInfo();
+
+        String remoteAddr = req.getHeader(X_FORWARDED_FOR);
+        if (remoteAddr == null)
+        {
+            remoteAddr = req.getRemoteAddr();
+        }
+        else
+        {
+            // As of https://en.wikipedia.org/wiki/X-Forwarded-For
+            // The general format of the field is: X-Forwarded-For: client, proxy1, proxy2 ...
+            // we only want the client
+            remoteAddr = new StringTokenizer(remoteAddr, ",").nextToken().trim();
+        }
+
         if (requestPath.startsWith(VERSION_ONE))
         {
             requestPath = requestPath.substring(requestPath.indexOf(VERSION_ONE)+VERSION_ONE.length(),requestPath.length());
@@ -61,6 +58,7 @@ public class ProxyGetMediationServlet extends HttpServlet {
         processor.addHeader("original-path", req.getPathInfo());
         processor.addHeader("request-path", requestPath);
         processor.addHeader("request-query",req.getQueryString());
+        processor.addHeader("request-ip",remoteAddr);
 
         //Call the exchange, passing in the processor
         Exchange result = producer.request(targetEndpoint, processor);

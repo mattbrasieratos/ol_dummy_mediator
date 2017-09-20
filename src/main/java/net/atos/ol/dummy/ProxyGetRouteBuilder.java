@@ -9,6 +9,7 @@ import org.apache.camel.Exchange;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Properties;
 
 
@@ -25,6 +26,25 @@ public class ProxyGetRouteBuilder
 
     public void configure() throws Exception
     {
+        readProperties();
+        from("direct:dummy-v1")
+                .routeId("dummy-mediation")
+                .errorHandler(loggingErrorHandler("dummy-mediation").level(LoggingLevel.ERROR))
+                .log(simple("v1:Received request for ${header.request-path} from ${header.request-ip}").getText())
+                .setHeader(Exchange.HTTP_URI,
+                            simple("http4://" + host + ":" + port + context + "${header.request-path}"))
+                .to("http4://dummy:12345?throwExceptionOnFailure=false") //URI here is overridden using header above
+                .log(simple("v1:Received response from http://" + host + ":" + port + context + "${header.request-path}").getText())
+                .convertBodyTo(java.lang.String.class);
+
+
+        from("direct:dummy-default")
+                .log(simple("default:Received request for ${header.request-path} from request-ip").getText())
+                .log(simple("default:Decision version select: route to v1").getText())
+                .to("direct:dummy-v1");
+    }
+
+    private void readProperties() throws IOException {
         try {
             Properties p = new Properties();
             FileInputStream file = new FileInputStream("/proxy.properties");
@@ -43,20 +63,5 @@ public class ProxyGetRouteBuilder
         {
             log.warn("Unable to open /proxy.properties. Defaulting proxy settings");
         }
-        from("direct:dummy-v1")
-                .routeId("dummy-mediation")
-                .errorHandler(loggingErrorHandler("dummy-mediation").level(LoggingLevel.ERROR))
-                .log(simple("v1:Received request for ${header.request-path}").getText())
-                .setHeader(Exchange.HTTP_URI,
-                            simple("http4://" + host + ":" + port + context + "${header.request-path}"))
-                .to("http4://dummy:12345?throwExceptionOnFailure=false") //URI here is overridden using header above
-                .log(simple("v1:Received response from http://" + host + ":" + port + context + "${header.request-path}").getText())
-                .convertBodyTo(java.lang.String.class);
-
-
-        from("direct:dummy-default")
-                .log(simple("default:Received request for ${header.request-path}").getText())
-                .log(simple("default:Decision version select: route to v1").getText())
-                .to("direct:dummy-v1");
     }
 }

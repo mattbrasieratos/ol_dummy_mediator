@@ -27,7 +27,7 @@ public class DummyTest {
     @CubeIp(containerName = "test")
     private String cip;
 
-    @DockerUrl(containerName = "test", exposedPort = 8080)
+    @DockerUrl(containerName = "test", exposedPort = 1080)
     @ArquillianResource
     private URL url;
 
@@ -35,11 +35,11 @@ public class DummyTest {
     @RunAsClient
     @InSequence(10)
     public void echoTestDefault() throws Exception {
-        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/echo/12345");
+        System.out.println("URL: "+"http://"+cip+":1080/" + "echo/12345");
 
         given().
                 when().
-                get("http://"+cip+":8080/" + "dummy-mediation/echo/12345").
+                get("http://"+cip+":1080/" + "echo/12345").
                 then().
                 assertThat().body(containsString("12345"));
     }
@@ -49,11 +49,11 @@ public class DummyTest {
     @InSequence(20)
     public void reverseTestDefault() throws Exception {
 
-        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/reverse/12345");
+        System.out.println("URL: "+"http://"+cip+":1080/" + "reverse/12345");
 
         given().
                 when().
-                get("http://"+cip+":8080/" + "dummy-mediation/reverse/12345").
+                get("http://"+cip+":1080/" + "reverse/12345").
                 then().
                 assertThat().body(containsString("54321"));
     }
@@ -62,11 +62,11 @@ public class DummyTest {
     @InSequence(30)
     public void timeTestDefault() throws Exception {
 
-        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/time");
+        System.out.println("URL: "+"http://"+cip+":1080/" + "time");
 
         given().
                 when().
-                get("http://"+cip+":8080/" + "dummy-mediation/time").
+                get("http://"+cip+":1080/" + "time").
                 then().
                 assertThat().body(containsString(":"));
     }
@@ -74,11 +74,11 @@ public class DummyTest {
     @RunAsClient
     @InSequence(40)
     public void echoTestV1() throws Exception {
-        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/v1/echo/12345");
+        System.out.println("URL: "+"http://"+cip+":1080/" + "v1/echo/12345");
 
         given().
                 when().
-                get("http://"+cip+":8080/" + "dummy-mediation/echo/v1/12345").
+                get("http://"+cip+":1080/" + "v1/echo/12345").
                 then().
                 assertThat().body(containsString("12345"));
     }
@@ -88,11 +88,11 @@ public class DummyTest {
     @InSequence(50)
     public void reverseTestV1() throws Exception {
 
-        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/v1/reverse/12345");
+        System.out.println("URL: "+"http://"+cip+":1080/" + "v1/reverse/12345");
 
         given().
                 when().
-                get("http://"+cip+":8080/" + "dummy-mediation/v1/reverse/12345").
+                get("http://"+cip+":1080/" + "v1/reverse/12345").
                 then().
                 assertThat().body(containsString("54321"));
     }
@@ -101,11 +101,11 @@ public class DummyTest {
     @InSequence(60)
     public void timeTestV1() throws Exception {
 
-        System.out.println("URL: "+"http://"+cip+":8080/" + "dummy-mediation/v1/time");
+        System.out.println("URL: "+"http://"+cip+":1080/" + "v1/time");
 
         given().
                 when().
-                get("http://"+cip+":8080/" + "dummy-mediation/v1/time").
+                get("http://"+cip+":1080/" + "v1/time").
                 then().
                 assertThat().body(containsString(":"));
     }

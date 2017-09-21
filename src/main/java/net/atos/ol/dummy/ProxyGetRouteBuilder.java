@@ -46,7 +46,7 @@ public class ProxyGetRouteBuilder
                 .routeId("dummy-mediation-v1")
                 .errorHandler(loggingErrorHandler("dummy-mediation").level(LoggingLevel.ERROR))
                 .setHeader("request-path",simple("${header.CamelHttpPath}"))
-                .log(simple("v1:Received request for ${header.request-path} from ${header.request-ip}").getText())
+                .log(simple("v1:Received request for ${header.request-path} from ${header.request-ip} forward for ${header.forward-for}").getText())
                 .setHeader(Exchange.HTTP_URI,
                             simple("http4://" + host + ":" + port))
                 //In this instance we set the path to the incoming path. We might want to translate for other services
@@ -58,41 +58,43 @@ public class ProxyGetRouteBuilder
         from(jettyEndpoint)
                 .routeId("dummy-mediation")
                 .setHeader("request-path",simple("${header.CamelHttpPath}"))
-                .log(simple("version-select:Received request for ${header.request-path} from {$header.request-ip}").getText())
+                .log(simple("version-select:Received request for ${header.request-path}").getText())
                 .process(new Processor() {
-                   @Override
-                   public void process(Exchange exchange) throws Exception {
-                     String requestPath = (String)exchange.getIn().getHeader(Exchange.HTTP_PATH);
-                     if (requestPath.startsWith(V1))
-                     {
-                        requestPath = requestPath.substring(requestPath.indexOf(V1)+V1.length(),requestPath.length());
-                        exchange.getOut().setHeader("service-version","1");
-                        exchange.getOut().setHeader(Exchange.HTTP_PATH,requestPath);
-
-                         HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
-                         String remoteAddr = req.getHeader(X_FORWARDED_FOR);
-                         if (remoteAddr == null)
-                         {
-                             remoteAddr = req.getRemoteAddr();
-                         }
-                         else
-                         {
-                             // As of https://en.wikipedia.org/wiki/X-Forwarded-For
-                             // The general format of the field is: X-Forwarded-For: client, proxy1, proxy2 ...
-                             // we only want the client
-                             remoteAddr = new StringTokenizer(remoteAddr, ",").nextToken().trim();
-                         }
-                         int remotePort = req.getRemotePort();
-                         exchange.getOut().setHeader("request-ip",remoteAddr+":"+remotePort);
-                     }
-                   }})
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        //Set the version header
+                        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                        exchange.getOut().setBody(exchange.getIn().getBody());
+                        String requestPath = (String)exchange.getIn().getHeader(Exchange.HTTP_PATH);
+                        if (requestPath.startsWith(V1))
+                        {
+                            requestPath = requestPath.substring(requestPath.indexOf(V1)+V1.length(),requestPath.length());
+                            exchange.getOut().setHeader("service-version","1");
+                            exchange.getOut().setHeader(Exchange.HTTP_PATH,requestPath);
+                        }
+                    }
+                })
+                .process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        //populate the request-ip and forward-ip headers
+                        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                        exchange.getOut().setBody(exchange.getIn().getBody());
+                        HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
+                        String forwardFor = req.getHeader(X_FORWARDED_FOR);
+                        String remoteAddr = req.getRemoteAddr();
+                        int remotePort = req.getRemotePort();
+                        exchange.getOut().setHeader("request-ip", remoteAddr + ":" + remotePort);
+                        exchange.getOut().setHeader("forward-for", forwardFor);
+                    }
+                })
                 .choice()
                     .when(header("service-version").isEqualTo("1"))
-                    .log(simple("version-select:Decision version select: route to v1").getText())
-                    .to("direct:dummy-v1")
-                .otherwise()
-                    .log(simple("version-select:Decision version select: default to v1").getText())
-                    .to("direct:dummy-v1")
+                        .log(simple("version-select:Decision version select: route to v1").getText())
+                        .to("direct:dummy-v1")
+                    .otherwise()
+                        .log(simple("version-select:Decision version select: default to v1").getText())
+                        .to("direct:dummy-v1")
                 .endChoice();
     }
 

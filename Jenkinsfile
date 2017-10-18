@@ -29,15 +29,6 @@ node {
           sh 'mvn -B org.owasp:dependency-check-maven:2.1.0:check'
         }
 
-        stage('Sonar Check') {
-          withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'sonar',
-                        usernameVariable: 'SONAR_USER', passwordVariable: 'SONAR_PASS']]) {
-            sh '''mvn -B sonar:sonar \
-                -Dsonar.host.url=http://sonar:9000 \
-                -Dsonar.login=${SONAR_USER} \
-                -Dsonar.password=${SONAR_PASS}'''                                        
-          }
-        }
 
         stage('Package') {
           sh 'mvn -B package'
@@ -61,6 +52,20 @@ node {
          sh 'mvn -P test -B test'
         }
 
+    }
+    withDockerContainer(image: 'maven:3-jdk-8',
+          args: '''--network="citools"
+                   -v /var/run/docker.sock:/var/run/docker.sock
+                   --group-add ${DOCKER_GID}''') {
+        stage('Sonar Check') {
+          withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'sonar',
+                        usernameVariable: 'SONAR_USER', passwordVariable: 'SONAR_PASS']]) {
+            sh '''mvn -B sonar:sonar \
+                -Dsonar.host.url=http://sonar:9000 \
+                -Dsonar.login=${SONAR_USER} \
+                -Dsonar.password=${SONAR_PASS}'''
+          }
+        }
     }
     
     stage('Publish WAR') {

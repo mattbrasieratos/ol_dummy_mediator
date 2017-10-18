@@ -22,7 +22,7 @@
                 buildImage:
                     dockerfileLocation: src/test/docker/unit-test
                     noCache: true
-                    remove: false
+                    remove: true
                 await:
                     strategy: sleeping
                     sleepTime: 30 s

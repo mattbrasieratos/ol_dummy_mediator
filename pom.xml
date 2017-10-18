@@ -65,7 +65,12 @@
             <version>${version.apache.camel}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <scope>provided</scope>
+            <version>1.2</version>
+        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>

@@ -53,8 +53,12 @@ node {
       args: '''
                -v /var/run/docker.sock:/var/run/docker.sock
                 --group-add ${DOCKER_GID}''') { 
-    	 stage('Test') {
+    	 stage('Integration Test') {
           sh 'mvn -P test -B test'
+        }
+         stage('Unit Test') {
+         sh 'mvn clean package docker:build'
+         sh 'mvn -P test -B test'
         }
 
     }

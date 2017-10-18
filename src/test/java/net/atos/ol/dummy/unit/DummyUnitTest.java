@@ -36,10 +36,6 @@ public class DummyUnitTest extends DummyTestCases{
 
     @Deployment
     public static Archive<?> createDeployment() {
-        // This lets us use RestAssured for in-container testing
-        //File[] libs = Maven.resolver().loadPomFromFile("pom.xml")
-        //        .resolve("io.rest-assured:rest-assured")
-        //        .withTransitivity().asFile();
         Archive war = ShrinkWrap.create(ZipImporter.class, "dummy-mediation.war")
                 .importFrom(new File("target/dummy-mediation.war")).as(WebArchive.class)
                 .addClasses(DummyUnitTest.class,DummyTestCases.class);
@@ -106,18 +102,8 @@ public class DummyUnitTest extends DummyTestCases{
     @Test
     @InSequence(999)
     public void dummy_to_capture_stats() {
+
         Assert.assertTrue(true);
     }
 
-    private String fixUrl(URL url)
-    {
-        String urlAsString = url.toExternalForm();
-        System.out.println("URL as string: "+urlAsString);
-        String hostname_1=urlAsString.substring(urlAsString.indexOf("http://")+"http://".length(),urlAsString.length());
-        System.out.println("Intermediate string: "+hostname_1);
-        String hostname = hostname_1.substring(0,hostname_1.indexOf(":8080"));
-        String testUrl="http://"+hostname+":1080/";
-        System.out.println("TEST URL: "+testUrl);
-        return testUrl;
-    }
 }

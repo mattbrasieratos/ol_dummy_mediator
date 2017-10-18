@@ -47,6 +47,8 @@ public class DummyUnitTest extends DummyTestCases{
         return war;
     }
 
+    @CubeIp(containerName = "unit-test")
+    private String cip;
 
     @ArquillianResource
     private URL url;
@@ -55,7 +57,8 @@ public class DummyUnitTest extends DummyTestCases{
     @RunAsClient
     @InSequence(10)
     public void echoTestDefault() throws Exception {
-        super.echoTestDefault(fixUrl(url));
+        //super.echoTestDefault(fixUrl(url));
+        super.echoTestDefault("http://"+cip+":1080/");
 
     }
 
@@ -63,23 +66,23 @@ public class DummyUnitTest extends DummyTestCases{
     @RunAsClient
     @InSequence(20)
     public void reverseTestDefault() throws Exception {
-
-        super.reverseTestDefault(fixUrl(url));
+        //super.reverseTestDefault(fixUrl(url));
+        super.reverseTestDefault("http://"+cip+":1080/");
     }
     @Test
     @RunAsClient
     @InSequence(30)
     public void timeTestDefault() throws Exception {
-
-        super.timeTestDefault(fixUrl(url));
+        //super.timeTestDefault(fixUrl(url));
+        super.timeTestDefault("http://"+cip+":1080/");
 
     }
     @Test
     @RunAsClient
     @InSequence(40)
     public void echoTestV1() throws Exception {
-
-        super.echoTestV1(fixUrl(url));
+        //super.echoTestV1(fixUrl(url));
+        super.echoTestV1("http://"+cip+":1080/");
 
     }
 
@@ -87,15 +90,17 @@ public class DummyUnitTest extends DummyTestCases{
     @RunAsClient
     @InSequence(50)
     public void reverseTestV1() throws Exception {
+        //super.reverseTestV1(fixUrl(url));
 
-        super.reverseTestV1(fixUrl(url));
+        super.reverseTestV1("http://"+cip+":1080/");
     }
     @Test
     @RunAsClient
     @InSequence(60)
     public void timeTestV1() throws Exception {
+        //super.timeTestV1(fixUrl(url));
+        super.timeTestV1("http://"+cip+":1080/");
 
-        super.timeTestV1(fixUrl(url));
     }
 
     @Test

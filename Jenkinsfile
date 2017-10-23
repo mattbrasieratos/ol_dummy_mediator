@@ -49,7 +49,7 @@ node {
         }
          stage('Unit Test') {
          sh 'mvn clean package docker:build'
-         sh 'mvn -P test -B test'
+         sh 'mvn -P unit-test -B test'
         }
 
     }

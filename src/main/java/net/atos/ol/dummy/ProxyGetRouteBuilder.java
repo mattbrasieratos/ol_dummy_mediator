@@ -45,15 +45,35 @@ public class ProxyGetRouteBuilder
         from("direct:dummy-v1")
                 .routeId("dummy-mediation-v1")
                 .errorHandler(loggingErrorHandler("dummy-mediation").level(LoggingLevel.ERROR))
+                .process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                        exchange.getOut().setBody(exchange.getIn().getBody());
+                        long startTime = System.currentTimeMillis();
+                        exchange.getOut().setHeader("request-start",startTime);
+                    }
+                })
                 .setHeader("request-path",simple("${header.CamelHttpPath}"))
-                .log(simple("v1:Received request for ${header.request-path} from ${header.request-ip} forward for ${header.forward-for}").getText())
+                .log(simple("v1:Received request for ${header.request-path} from client ${header.User-Agent} with IP ${header.request-ip} forwarded for ${header.forward-for}").getText())
                 .setHeader(Exchange.HTTP_URI,
                             simple("http4://" + host + ":" + port))
                 //In this instance we set the path to the incoming path. We might want to translate for other services
                 .setHeader(Exchange.HTTP_PATH, simple(context+"${header.request-path}"))
                 .to("http4://dummy:12345?throwExceptionOnFailure=false") //URI here is overridden using header above
                 .log(simple("v1:Received response from http://" + host + ":" + port +"${header.CamelHttpPath}").getText())
-                .convertBodyTo(java.lang.String.class);
+                .convertBodyTo(java.lang.String.class)
+                .process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                        exchange.getOut().setBody(exchange.getIn().getBody());
+                        long startTime = (Long)exchange.getIn().getHeader("request-start");
+                        long endTime = System.currentTimeMillis();
+                        exchange.getOut().setHeader("request-duration",endTime-startTime);
+                    }
+                })
+                .log(simple("v1:Processing time ${header.request-duration}").getText());
 
         from(jettyEndpoint)
                 .routeId("dummy-mediation")

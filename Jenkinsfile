@@ -26,7 +26,7 @@ node {
         }
         
         stage('Dependency Check') {
-          sh 'mvn -B org.owasp:dependency-check-maven:2.1.0:check'
+          sh 'mvn -B org.owasp:dependency-check-maven:3.1.1:check'
         }
 
 

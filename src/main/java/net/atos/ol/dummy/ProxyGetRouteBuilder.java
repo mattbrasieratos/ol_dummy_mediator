@@ -26,8 +26,8 @@ public class ProxyGetRouteBuilder
 {
     public static final String V1 = "v1/";
     private static final String X_FORWARDED_FOR = "X-Forwarded-For";
-    String host = "dummy-service";
-    String port = "8080";
+    String host = "dummy.ol.stub";
+    String port = "8443";
     String context = "/ol_dummy_service/dummy/";
 
 
@@ -57,7 +57,7 @@ public class ProxyGetRouteBuilder
                 .setHeader("request-path",simple("${header.CamelHttpPath}"))
                 .log(simple("v1:Received request for ${header.request-path} from client ${header.User-Agent} with IP ${header.request-ip} forwarded for ${header.forward-for}").getText())
                 .setHeader(Exchange.HTTP_URI,
-                            simple("http4://" + host + ":" + port))
+                            simple("https4://" + host + ":" + port))
                 //In this instance we set the path to the incoming path. We might want to translate for other services
                 .setHeader(Exchange.HTTP_PATH, simple(context+"${header.request-path}"))
                 .to("http4://dummy:12345?throwExceptionOnFailure=false") //URI here is overridden using header above

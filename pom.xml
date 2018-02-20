@@ -150,7 +150,7 @@
                                     <descriptor>assembly.xml</descriptor>
                                 </assembly>
                                 <!-- requires fuse on eap Docker image -->
-                                <from>fuse_eap:6.3.0</from>
+                                <from>ol_fuse_eap:6.3.0-ssl</from>
                             </build>
                         </image>
                     </images>

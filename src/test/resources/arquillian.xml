@@ -32,7 +32,7 @@
                     maximumRetryCount: 1
                 manual: false
                 links:
-                    - dummy-service:dummy-service
+                    - dummy.ol.stub:dummy.ol.stub
 
             test:
                 image: dummy-mediation:0.0.1-SNAPSHOT
@@ -46,9 +46,9 @@
                     maximumRetryCount: 1
                 manual: false
                 links:
-                    - dummy-service:dummy-service
+                    - dummy.ol.stub:dummy.ol.stub
 
-            dummy-service:
+            dummy.ol.stub:
                 image: ol_dummy_service:0.0.1-SNAPSHOT
                 await:
                     strategy: sleeping
